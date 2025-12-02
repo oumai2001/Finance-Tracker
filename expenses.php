@@ -26,6 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add'])) {
     }
 }
 
+// Gestion de la suppression
+if (isset($_GET['delete'])) {
+    $id = (int)$_GET['delete'];
+    $stmt = $pdo->prepare("DELETE FROM expenses WHERE id = ?");
+    if ($stmt->execute([$id])) {
+        $success = "Dépense supprimée avec succès !";
+    }
+}
+
+// Récupérer les catégories de dépenses
+$categories = $pdo->query("SELECT * FROM categories WHERE type = 'expense' ORDER BY name")->fetchAll();
+
 include 'includes/header.php';
 ?>
 
