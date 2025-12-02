@@ -26,6 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add'])) {
     }
 }
 
+// Gestion de la suppression
+if (isset($_GET['delete'])) {
+    $id = (int)$_GET['delete'];
+    $stmt = $pdo->prepare("DELETE FROM incomes WHERE id = ?");
+    if ($stmt->execute([$id])) {
+        $success = "Revenu supprimé avec succès !";
+    }
+}
+
+
+// Récupérer les catégories de revenus
+$categories = $pdo->query("SELECT * FROM categories WHERE type = 'income' ORDER BY name")->fetchAll();
 
 include 'includes/header.php';
 ?>
