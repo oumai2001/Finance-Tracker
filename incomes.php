@@ -35,6 +35,27 @@ if (isset($_GET['delete'])) {
     }
 }
 
+// Filtres
+$where = "1=1";
+$params = [];
+
+if (!empty($_GET['category'])) {
+    $where .= " AND category_id = ?";
+    $params[] = $_GET['category'];
+}
+
+if (!empty($_GET['month'])) {
+    $where .= " AND DATE_FORMAT(income_date, '%Y-%m') = ?";
+    $params[] = $_GET['month'];
+}
+
+// Récupérer les revenus avec filtres
+$sql = "SELECT i.*, c.name as category_name FROM incomes i 
+        LEFT JOIN categories c ON i.category_id = c.id 
+        WHERE $where ORDER BY income_date DESC";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$incomes = $stmt->fetchAll();
 
 // Récupérer les catégories de revenus
 $categories = $pdo->query("SELECT * FROM categories WHERE type = 'income' ORDER BY name")->fetchAll();
