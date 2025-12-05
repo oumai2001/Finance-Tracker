@@ -76,6 +76,69 @@ include 'includes/header.php';
     </div>
 </div>
 
+<!-- Graphique -->
+<div class="content">
+    <h3><i class="fas fa-chart-bar"></i> Comparaison Revenus vs Dépenses</h3>
+    <canvas id="comparisonChart"></canvas>
+</div>
 
+<!-- Dernières transactions -->
+<div class="content">
+    <h2><i class="fas fa-history"></i> Dernières Transactions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Montant</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($recent_transactions as $trans): ?>
+                <tr>
+                    <td>
+                        <?php if ($trans['type'] == 'income'): ?>
+                            <span style="color: #10b981;">✓ Revenu</span>
+                        <?php else: ?>
+                            <span style="color: #ef4444;">✗ Dépense</span>
+                        <?php endif; ?>
+                    </td>
+                    <td><?= htmlspecialchars($trans['description']) ?></td>
+                    <td style="font-weight: bold; color: <?= $trans['type'] == 'income' ? '#10b981' : '#ef4444' ?>">
+                        <?= number_format($trans['amount'], 2) ?> DH
+                    </td>
+                    <td><?= date('d/m/Y', strtotime($trans['date'])) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('comparisonChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Ce mois', 'Total'],
+            datasets: [{
+                label: 'Revenus',
+                data: [<?= $monthly_incomes ?>, <?= $total_incomes ?>],
+                backgroundColor: '#10b981'
+            }, {
+                label: 'Dépenses',
+                data: [<?= $monthly_expenses ?>, <?= $total_expenses ?>],
+                backgroundColor: '#ef4444'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
 
 <?php include 'includes/footer.php'; ?>
