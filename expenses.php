@@ -35,6 +35,28 @@ if (isset($_GET['delete'])) {
     }
 }
 
+// Filtres
+$where = "1=1";
+$params = [];
+
+if (!empty($_GET['category'])) {
+    $where .= " AND category_id = ?";
+    $params[] = $_GET['category'];
+}
+
+if (!empty($_GET['month'])) {
+    $where .= " AND DATE_FORMAT(expense_date, '%Y-%m') = ?";
+    $params[] = $_GET['month'];
+}
+
+// Récupérer les dépenses avec filtres
+$sql = "SELECT e.*, c.name as category_name FROM expenses e 
+        LEFT JOIN categories c ON e.category_id = c.id 
+        WHERE $where ORDER BY expense_date DESC";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$expenses = $stmt->fetchAll();
+
 // Récupérer les catégories de dépenses
 $categories = $pdo->query("SELECT * FROM categories WHERE type = 'expense' ORDER BY name")->fetchAll();
 
