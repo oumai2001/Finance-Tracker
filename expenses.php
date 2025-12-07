@@ -155,7 +155,8 @@ include 'includes/header.php';
                             <i class="fas fa-edit"></i> Modifier
                         </a>
                         <a href="?delete=<?= $expense['id'] ?>" 
-                           class="btn btn-danger btn-small" 
+                
+                        class="btn btn-danger btn-small" 
                            onclick="return confirm('Confirmer la suppression ?')">
                             <i class="fas fa-trash"></i> Supprimer
                         </a>

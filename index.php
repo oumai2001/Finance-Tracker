@@ -1,7 +1,6 @@
 <?php
 require_once 'config/database.php';
 
-// Définir le titre de la page
 $page_title = 'Dashboard';
 
 // Récupérer le total des revenus

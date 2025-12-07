@@ -12,12 +12,6 @@
                 <p class="footer-description">
                     Solution professionnelle de gestion financière pour suivre, analyser et optimiser vos revenus et dépenses en temps réel.
                 </p>
-                <div class="social-links">
-                    <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
-                    <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                </div>
             </div>
             
             <!-- Liens Rapides -->
@@ -29,17 +23,6 @@
                     <li><a href="expenses.php"><i class="fas fa-angle-right"></i> Mes Dépenses</a></li>
                 </ul>
             </div>
-            
-            <!-- Support -->
-            <div class="footer-section">
-                <h4>Support</h4>
-                <ul class="footer-links">
-                    <li><a href="#"><i class="fas fa-angle-right"></i> Centre d'aide</a></li>
-                    <li><a href="#"><i class="fas fa-angle-right"></i> FAQ</a></li>
-                    <li><a href="#"><i class="fas fa-angle-right"></i> Tutoriels</a></li>
-                    <li><a href="#"><i class="fas fa-angle-right"></i> Contact</a></li>
-                </ul>
-            </div>
         </div>
         
         <!-- Barre de copyright -->
@@ -47,16 +30,6 @@
             <div class="footer-container">
                 <p class="copyright">
                     &copy; <?= date('Y') ?> Finance Tracker. Tous droits réservés.
-                </p>
-                <div class="footer-bottom-links">
-                    <a href="#">Politique de confidentialité</a>
-                    <span>•</span>
-                    <a href="#">Conditions d'utilisation</a>
-                    <span>•</span>
-                    <a href="#">Mentions légales</a>
-                </div>
-                <p class="developer-credit">
-                    Développé avec <i class="fas fa-heart"></i> par <strong>Votre Équipe</strong>
                 </p>
             </div>
         </div>
@@ -69,7 +42,6 @@
     
     <!-- Scripts -->
     <script src="assets/js/script.js"></script>
-    <script src="assets/js/pwa-install.js"></script>
     
     <script>
         // Menu Mobile
@@ -122,16 +94,46 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
         
-        // Dropdown profil
-        const userProfile = document.querySelector('.user-profile');
-        userProfile?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            userProfile.classList.toggle('active');
+        // Animation des montants au chargement (Dashboard)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.amount').forEach(element => {
+                    const finalValue = element.textContent;
+                    const numericValue = parseFloat(finalValue.replace(/[^0-9.-]+/g, ''));
+                    
+                    if (!isNaN(numericValue)) {
+                        element.textContent = '0.00 DH';
+                        animateValue(element, 0, numericValue, 1000, finalValue.includes('DH'));
+                    }
+                });
+            }, 300);
         });
         
-        document.addEventListener('click', () => {
-            userProfile?.classList.remove('active');
-        });
+        function animateValue(element, start, end, duration, hasCurrency = true) {
+            const startTime = performance.now();
+            const difference = end - start;
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeProgress = progress * (2 - progress); // easeOutQuad
+                const current = start + (difference * easeProgress);
+                
+                const formatted = new Intl.NumberFormat('fr-FR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(current);
+                
+                element.textContent = hasCurrency ? formatted + ' DH' : formatted;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
     </script>
 </body>
 </html>

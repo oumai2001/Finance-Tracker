@@ -1,5 +1,5 @@
 -- Création de la base de données
-CREATE DATABASE IF NOT EXISTS finance_tracker CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS finance_tracker;
 USE finance_tracker;
 
 -- Table des revenus
@@ -8,40 +8,38 @@ CREATE TABLE IF NOT EXISTS incomes (
     description VARCHAR(255) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     income_date DATE NOT NULL,
+    category_id INT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
--- Table des dépenses
+-- Table des dépenses (CORRIGÉE)
 CREATE TABLE IF NOT EXISTS expenses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     description VARCHAR(255) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     expense_date DATE NOT NULL,
+    category_id INT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
--- Table des catégories (BONUS)
+-- Table des catégories
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
     type ENUM('income', 'expense') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
--- Ajouter la colonne category_id aux tables (BONUS)
-ALTER TABLE incomes ADD COLUMN category_id INT DEFAULT NULL;
-ALTER TABLE expenses ADD COLUMN category_id INT DEFAULT NULL;
-
--- Clés étrangères (BONUS)
+-- Clés étrangères
 ALTER TABLE incomes ADD CONSTRAINT fk_income_category 
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL;
     
 ALTER TABLE expenses ADD CONSTRAINT fk_expense_category 
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL;
 
--- Insertion de catégories par défaut (BONUS)
+-- Insertion de catégories par défaut
 INSERT INTO categories (name, type) VALUES
 ('Salaire', 'income'),
 ('Freelance', 'income'),
